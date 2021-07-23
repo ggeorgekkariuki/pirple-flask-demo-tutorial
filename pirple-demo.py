@@ -15,7 +15,7 @@ user = model.check_users()
 def home():
     if 'username' in session:
         g.user = session['username']
-        return render_template("football.html")
+        return render_template("football.html", message="You are logged in!")
     return render_template("homepage.html", message="Log in to the page or Sign Up!")
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -25,8 +25,8 @@ def login():
         session.pop(username, None)
         areYouTheUser = request.form['username']
         passwordForTheUser = model.check_password(areYouTheUser)
-        if request.form['password'] == request.form['username']:
-            session['username'] = areYouTheUser
+        if request.form['password'] == passwordForTheUser:
+            session['username'] = request.form['username']
             return redirect(url_for('home'))
 
     return render_template("index.html")
@@ -67,7 +67,7 @@ def getsession():
 @app.route('/logout')
 def logout():
     session.pop(username, None)
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/football', methods=['GET'])
 def football():
